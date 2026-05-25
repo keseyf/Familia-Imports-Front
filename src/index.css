@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+:root{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  scroll-behavior: smooth;
+  scroll-padding: 40vh;
+  @apply bg-neutral-100
+}
+
+@theme {
+  --color-accent: #0021c2;
+  --color-accent-100: #127a87;
+
+  --color-primary: #031214;
+}
+
+#ho::after{
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background-color: var(--color-accent);
+  transition: 0.2s;
+}
+
+#ho:hover{
+  color: var(--color-accent);
+}
+
+#ho:hover::after{
+  width: 100%;
+  transition: width 0.3s ease;
+}
+/* index.css */
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
+.text-rotate {
+  position: relative;
+  display: inline-block;
+  color: var(--color-accent);
+  height: 1.2em;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.text-rotate span {
+  display: block;
+  animation: rotateWords 6s infinite;
+}
+
+@keyframes rotateWords {
+  0% {
+    transform: translateY(0%);
+  }
+
+  20% {
+    transform: translateY(0%);
+  }
+
+  25% {
+    transform: translateY(-23%);
+  }
+
+  45% {
+    transform: translateY(-23%);
+  }
+
+  50% {
+    transform: translateY(-50%);
+  }
+
+  70% {
+    transform: translateY(-50%);
+  }
+
+  75% {
+    transform: translateY(-75%);
+  }
+
+  95% {
+    transform: translateY(-75%);
+  }
+
+  100% {
+    transform: translateY(0%);
+  }
+}
