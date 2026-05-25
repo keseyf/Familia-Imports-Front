@@ -19,6 +19,12 @@ export default async function CreateProductController({
 }: CreateProductProps) {
 
   try {
+    if (!import.meta.env.VITE_API_URL) {
+      throw new Error("VITE_API_URL não está definida no arquivo .env");
+    }
+    if (!import.meta.env.VITE_IMAGE_UPLOAD_KEY) {
+      throw new Error("VITE_IMAGE_UPLOAD_KEY não está definida no arquivo .env");
+    }
     if (!name || !description || !category || !price || images.length === 0) {
       return { status: "error", message: "Todos os campos são obrigatórios" };
     }
@@ -32,7 +38,7 @@ export default async function CreateProductController({
       const formData = new FormData();
       formData.append("image", image);
       return await axios.post(
-        "https://api.imgbb.com/1/upload?key=3c8615b541764bd1e082457576e432a8",
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_UPLOAD_KEY}`,
         formData
       );
     });
@@ -44,7 +50,7 @@ export default async function CreateProductController({
 
     // Cria produto com array de URLs
     const response = await axios.post(
-      "http://localhost:4444/create/product",
+      `${import.meta.env.VITE_API_URL}create/product`,
       {
         name,
         description,
