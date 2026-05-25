@@ -7,8 +7,6 @@ export default function Cart({ cart }: { cart: Product[] }) {
   const [visible, setVisible] = useState(false)
 
   const itemCount = cart.length
-  
-  const [products] = localStorage.getItem("cart") ? useState<Product[]>(JSON.parse(localStorage.getItem("cart")!)) : useState<Product[]>([])
 
   useEffect(() => {
     if (open) {

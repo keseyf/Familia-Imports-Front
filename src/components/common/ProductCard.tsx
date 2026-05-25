@@ -7,7 +7,7 @@ interface Props {
   onClickProduct: (product: Product) => void;
 }
 
-export default function ProductCard({ product, onAdd, onClickProduct }: Props) {
+export default function ProductCard({ product, onClickProduct }: Props) {
 
   return (
 

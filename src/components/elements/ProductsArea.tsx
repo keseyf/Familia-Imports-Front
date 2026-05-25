@@ -123,7 +123,7 @@ export default function ProductsArea({
 
             {/* Bottom border accent */}
             <div className="px-6 md:px-12 mt-10">
-              <div className="h-px bg-gradient-to-r from-gray-900 to-transparent w-full" />
+              <div className="h-px from-gray-900 to-transparent w-full" />
             </div>
           </section>
         );

@@ -246,7 +246,7 @@ export default function HeaderAdmin() {
                   isSmall ? "hover:bg-gray-100" : "hover:bg-white/10"
                 }`}
               >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white text-sm font-bold shrink-0">
+                <div className="w-8 h-8 rounded-full from-gray-700 to-gray-900 flex items-center justify-center text-white text-sm font-bold shrink-0">
                   {mockAdmin.name.charAt(0)}
                 </div>
                 <div className="hidden sm:block text-left">

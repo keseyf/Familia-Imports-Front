@@ -49,14 +49,14 @@ export default function NotFound() {
 
         {/* Linha decorativa */}
         <div
-          className={`h-px w-24 bg-gradient-to-r from-transparent via-gray-400 to-transparent transition-all duration-700 delay-300 ${
+          className={`h-px w-24 from-transparent via-gray-400 to-transparent transition-all duration-700 delay-300 ${
             visible ? "opacity-100 scale-x-100" : "opacity-0 scale-x-0"
           }`}
         />
 
         {/* Botão */}
         <div
-          className={`transition-all duration-700 delay-[400ms] ${
+          className={`transition-all duration-700 ${
             visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
           }`}
         >

@@ -106,7 +106,7 @@ export default function CreateProduct() {
               placeholder="Descreva o produto, materiais, caimento..."
               value={description}
               onChange={e => setDescription(e.target.value)}
-              className="w-full border border-zinc-200 bg-white rounded-2xl px-4 py-3.5 outline-none min-h-[110px] text-gray-800 placeholder-gray-300 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 transition-all text-sm resize-none"
+              className="w-full border border-zinc-200 bg-white rounded-2xl px-4 py-3.5 outline-none text-gray-800 placeholder-gray-300 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 transition-all text-sm resize-none"
               required
             />
           </div>
