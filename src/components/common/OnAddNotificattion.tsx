@@ -14,7 +14,7 @@ export default function OnAddNottification({ message }: { message: string }) {
     }, []);
 
   return (
-    <div id="sNc" className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow">
+    <div id="sNc" className="fixed text-xl text-center top-30 right-7 bg-green-500 text-white px-4 py-2 rounded shadow">
       {message}
     </div>
   );

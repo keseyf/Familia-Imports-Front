@@ -10,6 +10,7 @@ import { NewsArea } from "../components/elements/NewsArea";
 import Characteristics from "../components/elements/Characteristics";
 import Footter from "../components/elements/Footter";
 import ProductModal from "../components/common/ProductModal";
+import OnAddNottification from "../components/common/OnAddNotificattion";
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -19,6 +20,7 @@ export default function Home() {
     const saved = localStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
   });
+  const [showNotification, setShowNotification] = useState(false);
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -31,6 +33,8 @@ export default function Home() {
 
   function onAdd(product: Product) {
   handleAdd({ product, setCart });
+  setShowNotification(true);
+  setTimeout(() => setShowNotification(false), 3000);
 }
 
   return (
@@ -53,8 +57,9 @@ export default function Home() {
             }}
           />
         )}
+        {showNotification && <OnAddNottification message="Produto adicionado ao carrinho!" />}
       </main>
-      <Cart cart={cart} />
+      <Cart cart={cart} setCart={setCart}/>
       <Footter />
       {selectedProduct && (
         <ProductModal

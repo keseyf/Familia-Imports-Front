@@ -54,15 +54,15 @@ export default function ProductsArea({
   if (!products || products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-6">
-        <p className="text-4xl font-black tracking-tighter text-gray-200 uppercase">
+        <p className="text-4xl font-black tracking-tighter text-gray-800 uppercase">
           Sem produtos
         </p>
-        <p className="text-sm text-gray-400 tracking-widest uppercase">
+        <p className="text-sm text-gray-500 tracking-widest uppercase">
           Nenhum item encontrado
         </p>
         <button
           onClick={onClickEvent}
-          className="mt-2 border border-gray-700 text-gray-300 text-xs tracking-widest uppercase px-8 py-3 hover:bg-white hover:text-black transition-all duration-300"
+          className="mt-2 bg-gray-700 text-gray-200 text-xs tracking-widest uppercase px-8 py-3 hover:bg-white hover:text-black border border-transparent cursor-pointer hover:border-gray-800 transition-all duration-300"
         >
           Tentar novamente
         </button>
@@ -79,10 +79,10 @@ export default function ProductsArea({
           <section
             id={category}
             key={category}
-            className={`py-16`}
+            className={`py-6`}
           >
             {/* Category header */}
-            <div className="category-header px-6 md:px-12 mb-10 flex items-end justify-between gap-4">
+            <div className="category-header px-6 md:px-12 mb-10 flex items-end justify-between gap-1">
               <div className="flex flex-col gap-1">
                 {/* Número da seção */}
                 <span className="text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase">

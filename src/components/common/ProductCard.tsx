@@ -1,5 +1,8 @@
+import { FaEye } from "react-icons/fa6";
 import type { Product } from "../../utils/interfaces";
 import { FiShoppingCart } from "react-icons/fi";
+import { BsEye, BsEyeSlashFill } from "react-icons/bs";
+import { CgEye } from "react-icons/cg";
 
 interface Props {
   product: Product;
@@ -15,7 +18,7 @@ export default function ProductCard({ product, onClickProduct }: Props) {
       <img
         src={product.imageUrls[0]}
         alt={product.name}
-        className="w-64 h-64 mt-1 object-cover rounded-2xl"
+        className="w-58 h-58 mt-1 object-cover rounded-2xl"
       />
 
       <div className="px-2 flex flex-col gap-2 flex-1">
@@ -39,9 +42,9 @@ export default function ProductCard({ product, onClickProduct }: Props) {
           </span>
 
           <button
-            className="bg-black z-30 text-white px-6 py-2 rounded-4xl hover:scale-105 transition cursor-pointer"
+            className="bg-gray-950 z-30 text-white px-6 py-2 rounded-4xl hover:scale-105 transition cursor-pointer"
           >
-            <FiShoppingCart size={18} />
+            <FaEye size={18} />
           </button>
 
         </div>
