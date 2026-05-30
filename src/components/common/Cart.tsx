@@ -39,8 +39,6 @@ export default function Cart({ cart, setCart }: { cart: Product[]; setCart: Reac
     `• ${p.name} (${p.quantity}x)`
   ).join("\n");
 
-  const total = cart.reduce((acc, p) => acc + p.price * p.quantity, 0).toFixed(2);
-
   const message = `Olá! Tenho interesse nos seguintes produtos:\n\n${items}`;
 
   const url = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;

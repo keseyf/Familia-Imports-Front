@@ -1,8 +1,5 @@
 import { FaEye } from "react-icons/fa6";
 import type { Product } from "../../utils/interfaces";
-import { FiShoppingCart } from "react-icons/fi";
-import { BsEye, BsEyeSlashFill } from "react-icons/bs";
-import { CgEye } from "react-icons/cg";
 
 interface Props {
   product: Product;
