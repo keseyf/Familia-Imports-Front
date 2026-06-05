@@ -9,11 +9,13 @@ import { fetchProducts } from "../../controllers/getProducts";
 import SuccessNotification from "../../components/common/SuccessNotification";
 import ErrorNotification from "../../components/common/ErrorNotification";
 import type { Product } from "../../utils/interfaces";
+import axios from "axios";
 
 type Tab = "criar" | "atualizar" | "deletar";
 
 export default function AdminPage() {
-  const usrToken = localStorage.getItem("usrTk");
+  const [authorized, setAuthorized] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [activeTab, setActiveTab] = useState<Tab>("criar");
   const [statusResponse, setStatusResponse] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -22,15 +24,20 @@ export default function AdminPage() {
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-  // Update state
   const [updateName, setUpdateName] = useState("");
   const [updateDescription, setUpdateDescription] = useState("");
   const [updateCategory, setUpdateCategory] = useState("");
   const [updatePrice, setUpdatePrice] = useState("");
   const [updateKey, setUpdateKey] = useState("");
-
-  // Delete state
   const [deleteKey, setDeleteKey] = useState("");
+
+  // Verifica se é admin ao montar
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_URL}admin/verify`, { withCredentials: true })
+      .then(() => setAuthorized(true))
+      .catch(() => setAuthorized(false))
+      .finally(() => setChecking(false));
+  }, []);
 
   useEffect(() => {
     if (activeTab === "atualizar" || activeTab === "deletar") {
@@ -40,7 +47,19 @@ export default function AdminPage() {
     }
   }, [activeTab]);
 
-  if (!usrToken) return <AdminLogin />;
+  // Carregando verificação
+  if (checking) {
+    return (
+      <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
+        <svg className="animate-spin w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+        </svg>
+      </div>
+    );
+  }
+
+  if (!authorized) return <AdminLogin />;
 
   function notify(type: "success" | "error", message: string) {
     setStatusResponse({ type, message });

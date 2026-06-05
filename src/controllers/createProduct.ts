@@ -61,7 +61,6 @@ export default async function CreateProductController({
       }
     );
 
-    console.log(response.data);
     if (response.data.status === 201){
       return { status: response.data.status, message: "Sucesso! Produto criado com sucesso! Redirecionando..." };
     }else if (response.data.status === 401){
