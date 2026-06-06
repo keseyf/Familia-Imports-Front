@@ -32,12 +32,25 @@ export default function AdminPage() {
   const [deleteKey, setDeleteKey] = useState("");
 
   // Verifica se é admin ao montar
+
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}admin/verify`, { withCredentials: true })
-      .then(() => setAuthorized(true))
-      .catch(() => setAuthorized(false))
-      .finally(() => setChecking(false));
-  }, []);
+  const token = localStorage.getItem("adminToken");
+  if (!token) {
+    setAuthorized(false);
+    setChecking(false);
+    return;
+  }
+  axios.get(`${import.meta.env.VITE_API_URL}admin/verify`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(() => setAuthorized(true))
+    .catch(() => {
+      localStorage.removeItem("adminToken");
+      setAuthorized(false);
+    })
+    .finally(() => setChecking(false));
+}, []);
+
 
   useEffect(() => {
     if (activeTab === "atualizar" || activeTab === "deletar") {
