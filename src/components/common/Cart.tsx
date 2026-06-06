@@ -33,7 +33,11 @@ export default function Cart({ cart, setCart }: { cart: Product[]; setCart: Reac
   }
 
   function handleCheckout() {
-  const number = "5531972097400" // coloca o número do vendedor com DDI+DDD
+    if(cart.length === 0) {
+      alert("Seu carrinho está vazio!");
+      return;
+    }
+    const number = "5531972162133" // coloca o número do vendedor com DDI+DDD
 
   const items = cart.map(p =>
     `• ${p.name} (${p.quantity}x)`
