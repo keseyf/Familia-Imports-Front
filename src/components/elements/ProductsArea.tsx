@@ -4,12 +4,42 @@ import type { Product } from "../../utils/interfaces";
 import ProductCard from "../common/ProductCard";
 
 const categoryConfig: Record<string, { title: string; subtitle: string }> = {
-  camisas: { title: "Camisetas", subtitle: "Looks que falam por você" },
-  tenis: { title: "Tênis", subtitle: "Do concreto à passarela" },
-  calcas: { title: "Calças", subtitle: "Corte. Caimento. Atitude." },
-  casacos: { title: "Casacos", subtitle: "Camadas com propósito" },
-  conjuntos: { title: "Conjuntos", subtitle: "O look completo" },
-  bones: { title: "Bonés", subtitle: "O detalhe que define" },
+  camisetas: {
+    title: "Camisetas",
+    subtitle: "Mais que tecido, identidade.",
+  },
+  calcas: {
+    title: "Calças",
+    subtitle: "Caimento que impõe presença.",
+  },
+  short: {
+    title: "Shorts",
+    subtitle: "Leveza para qualquer ocasião.",
+  },
+  conjunto: {
+    title: "Conjuntos",
+    subtitle: "Tudo combina. Nada é comum.",
+  },
+  bobojaco: {
+    title: "Bobojacos",
+    subtitle: "Proteção para os dias mais frios.",
+  },
+  moletom: {
+    title: "Moletons",
+    subtitle: "Conforto que acompanha seu ritmo.",
+  },
+  jaqueta: {
+    title: "Jaquetas",
+    subtitle: "Camadas que carregam atitude.",
+  },
+  tenis: {
+    title: "Tênis",
+    subtitle: "Cada passo deixa uma marca.",
+  },
+  acessorios: {
+    title: "Acessórios",
+    subtitle: "Os detalhes fazem a diferença.",
+  },
 };
 
 export default function ProductsArea({
@@ -39,14 +69,16 @@ export default function ProductsArea({
   }, []);
 
   const groupedProducts = {
-    camisas: products.filter(p => p.category?.toLowerCase() === "camisetas"),
-    tenis: products.filter(p => p.category?.toLowerCase() === "tenis"),
+    camisetas: products.filter(p => p.category?.toLowerCase() === "camisetas"),
     calcas: products.filter(p => p.category?.toLowerCase() === "calcas"),
-    casacos: products.filter(p => p.category?.toLowerCase() === "casacos"),
-    conjuntos: products.filter(p => p.category?.toLowerCase() === "conjuntos"),
-    bones: products.filter(p => p.category?.toLowerCase() === "bones"),
+    short: products.filter(p => p.category?.toLowerCase() === "short"),
+    conjunto: products.filter(p => p.category?.toLowerCase() === "conjunto"),
+    bobojaco: products.filter(p => p.category?.toLowerCase() === "bobojaco"),
+    moletom: products.filter(p => p.category?.toLowerCase() === "moletom"),
+    jaqueta: products.filter(p => p.category?.toLowerCase() === "jaqueta"),
+    tenis: products.filter(p => p.category?.toLowerCase() === "tenis"),
+    acessorios: products.filter(p => p.category?.toLowerCase() === "acessorios"),
   };
-
   const sortedCategories = Object.entries(groupedProducts)
     .filter(([, categoryProducts]) => categoryProducts.length > 0)
     .sort((a, b) => b[1].length - a[1].length);
