@@ -122,10 +122,16 @@ export default function CreateProduct() {
                 required
               >
                 <option value="">Selecionar...</option>
-                <option value="camisetas">Camisetas</option>
+                <option value="camisetas">Camiseta</option>
                 <option value="calcas">Calças</option>
+                <option value="short">Short</option>
+                <option value="conjunto">Conjunto</option>
+                <option value="bobojaco">Bobojaco</option>
+                <option value="moletom">Moletom</option>
+                <option value="jaqueta">Jaqueta</option>
                 <option value="tenis">Tênis</option>
                 <option value="acessorios">Acessórios</option>
+
               </select>
             </div>
             <div className="flex flex-col gap-1.5">
