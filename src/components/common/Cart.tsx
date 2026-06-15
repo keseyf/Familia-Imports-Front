@@ -3,8 +3,6 @@ import { BiShoppingBag, BiX } from "react-icons/bi"
 import type { Product } from "../../utils/interfaces"
 import { TbTrash } from "react-icons/tb"
 import { createOrder } from "../../controllers/createOrder"
-
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3333"
 const WHATSAPP_NUMBER = "5531972162133"
 
 export default function Cart({
