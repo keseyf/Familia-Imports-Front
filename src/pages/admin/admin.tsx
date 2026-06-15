@@ -34,22 +34,22 @@ export default function AdminPage() {
   // Verifica se é admin ao montar
 
   useEffect(() => {
-  const token = localStorage.getItem("adminToken");
-  if (!token) {
-    setAuthorized(false);
-    setChecking(false);
-    return;
-  }
-  axios.get(`${import.meta.env.VITE_API_URL}admin/verify`, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-    .then(() => setAuthorized(true))
-    .catch(() => {
-      localStorage.removeItem("adminToken");
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
       setAuthorized(false);
+      setChecking(false);
+      return;
+    }
+    axios.get(`${import.meta.env.VITE_API_URL}admin/verify`, {
+      headers: { Authorization: `Bearer ${token}` }
     })
-    .finally(() => setChecking(false));
-}, []);
+      .then(() => setAuthorized(true))
+      .catch(() => {
+        localStorage.removeItem("adminToken");
+        setAuthorized(false);
+      })
+      .finally(() => setChecking(false));
+  }, []);
 
 
   useEffect(() => {
@@ -65,8 +65,8 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-zinc-50 flex items-center justify-center">
         <svg className="animate-spin w-8 h-8 text-gray-300" viewBox="0 0 24 24" fill="none">
-          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
         </svg>
       </div>
     );
@@ -144,8 +144,8 @@ export default function AdminPage() {
         {productsLoading ? (
           <div className="flex items-center justify-center py-10">
             <svg className="animate-spin w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
             </svg>
           </div>
         ) : products.length === 0 ? (
@@ -170,13 +170,12 @@ export default function AdminPage() {
                     key={product.id}
                     type="button"
                     onClick={() => selectProduct(product)}
-                    className={`flex flex-col rounded-2xl border-2 overflow-hidden text-left transition-all duration-200 ${
-                      selectedProduct?.id === product.id
+                    className={`flex flex-col rounded-2xl border-2 overflow-hidden text-left transition-all duration-200 ${selectedProduct?.id === product.id
                         ? accent === "red"
                           ? "border-red-500 shadow-md shadow-red-100"
                           : "border-gray-900 shadow-md shadow-gray-100"
                         : "border-zinc-200 hover:border-gray-300"
-                    }`}
+                      }`}
                   >
                     <div className="aspect-square w-full bg-zinc-100 overflow-hidden">
                       {product.imageUrls?.[0] ? (
@@ -212,9 +211,8 @@ export default function AdminPage() {
                   key={i}
                   type="button"
                   onClick={() => setCarouselIndex(i * VISIBLE)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all ${
-                    Math.floor(carouselIndex / VISIBLE) === i ? "bg-gray-900 w-4" : "bg-zinc-300"
-                  }`}
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${Math.floor(carouselIndex / VISIBLE) === i ? "bg-gray-900 w-4" : "bg-zinc-300"
+                    }`}
                 />
               ))}
             </div>
@@ -263,9 +261,8 @@ export default function AdminPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  activeTab === tab.id ? "bg-gray-900 text-white shadow-sm" : "text-gray-400 hover:text-gray-600"
-                }`}
+                className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${activeTab === tab.id ? "bg-gray-900 text-white shadow-sm" : "text-gray-400 hover:text-gray-600"
+                  }`}
               >
                 {tab.icon}
                 {tab.label}
@@ -292,9 +289,14 @@ export default function AdminPage() {
                 <div className="flex flex-col gap-1.5">
                   <label className={labelClass}>Categoria</label>
                   <select className={inputClass} value={updateCategory} onChange={e => setUpdateCategory(e.target.value)}>
-                    <option value="">Sem alteração</option>
-                    <option value="camisetas">Camisetas</option>
+                    <option value="">Selecionar...</option>
+                    <option value="camisetas">Camiseta</option>
                     <option value="calcas">Calças</option>
+                    <option value="short">Short</option>
+                    <option value="conjunto">Conjunto</option>
+                    <option value="bobojaco">Bobojaco</option>
+                    <option value="moletom">Moletom</option>
+                    <option value="jaqueta">Jaqueta</option>
                     <option value="tenis">Tênis</option>
                     <option value="acessorios">Acessórios</option>
                   </select>
@@ -311,15 +313,14 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 mt-1 ${
-                  loading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-gray-700 active:scale-[0.99]"
-                }`}
+                className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 mt-1 ${loading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-gray-900 text-white hover:bg-gray-700 active:scale-[0.99]"
+                  }`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                     </svg>
                     Processando...
                   </span>
@@ -342,15 +343,14 @@ export default function AdminPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 mt-1 ${
-                  loading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-500 active:scale-[0.99]"
-                }`}
+                className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 mt-1 ${loading ? "bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-red-600 text-white hover:bg-red-500 active:scale-[0.99]"
+                  }`}
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
                     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                     </svg>
                     Processando...
                   </span>
