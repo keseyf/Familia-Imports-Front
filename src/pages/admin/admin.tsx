@@ -362,8 +362,8 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {statusResponse?.type === "success" && <SuccessNotification message={statusResponse.message} />}
-      {statusResponse?.type === "error" && <ErrorNotification message={statusResponse.message} />}
+      {statusResponse?.type === "success" && <SuccessNotification onClose={()=>{}} message={statusResponse.message} />}
+      {statusResponse?.type === "error" && <ErrorNotification onClose={()=>{}} message={statusResponse.message} />}
     </div>
   );
 }
