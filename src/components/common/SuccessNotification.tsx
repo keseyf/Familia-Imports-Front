@@ -1,21 +1,70 @@
-import { useEffect } from "react";
-import ScrollReveal from "scrollreveal";
+import { useEffect, useState } from "react"
+import { BiCheck, BiX } from "react-icons/bi"
 
-export default function SuccessNotification({ message }: { message: string }) {
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            // Aqui você pode adicionar lógica para remover a notificação após um tempo
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, []);
+interface Props {
+  message: string
+  description?: string
+  duration?: number
+  onClose: () => void
+}
 
-    useEffect(() => {
-        ScrollReveal().reveal('#sNc', { delay: 200, distance: '20px', duration: 500, origin: 'top' });
-    }, []);
+export default function SuccessNotification({
+  message,
+  description,
+  duration = 3000,
+  onClose,
+}: Props) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const tIn  = setTimeout(() => setVisible(true), 10)
+    const tOut = setTimeout(() => {
+      setVisible(false)
+      setTimeout(onClose, 400)
+    }, duration)
+    return () => { clearTimeout(tIn); clearTimeout(tOut) }
+  }, [])
 
   return (
-    <div id="sNc" className="fixed top-10 right-8 bg-green-500 text-white px-4 py-2 rounded shadow">
-      {message}
+    <div className={`fixed top-5 right-5 z-[999] transition-all duration-400 ease-out ${
+      visible ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
+    }`}>
+      <div className="relative bg-white border border-emerald-100 rounded-2xl shadow-lg p-4 flex items-start gap-3 w-[300px] overflow-hidden">
+
+        {/* Ícone */}
+        <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+          <BiCheck className="text-emerald-600 text-xl" />
+        </div>
+
+        {/* Texto */}
+        <div className="flex-1 min-w-0 pt-0.5">
+          <p className="text-sm font-semibold text-emerald-900 leading-tight">{message}</p>
+          {description && (
+            <p className="text-xs text-emerald-400 mt-1 leading-snug">{description}</p>
+          )}
+        </div>
+
+        {/* Fechar */}
+        <button
+          onClick={() => { setVisible(false); setTimeout(onClose, 400) }}
+          className="text-emerald-300 hover:text-emerald-500 transition-colors shrink-0"
+        >
+          <BiX className="text-lg" />
+        </button>
+
+        {/* Barra de progresso */}
+        <div
+          className="absolute bottom-0 left-0 h-[3px] bg-emerald-400 rounded-b-2xl"
+          style={{ animation: `shrink ${duration}ms linear forwards` }}
+        />
+      </div>
+
+      <style>{`
+        @keyframes shrink {
+          from { width: 100%; }
+          to   { width: 0%; }
+        }
+      `}</style>
     </div>
-  );
+  )
 }

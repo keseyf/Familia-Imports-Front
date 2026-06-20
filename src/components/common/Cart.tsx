@@ -42,6 +42,18 @@ export default function Cart({
     })
   }
 
+  // Adiciona essa função antes do return
+function formatPhone(value: string) {
+  // Remove tudo que não for número
+  const digits = value.replace(/\D/g, "").slice(0, 11)
+
+  if (digits.length <= 2) return `(${digits}`
+  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+  if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+  // 11 dígitos — celular: (xx) xxxxx-xxxx
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
+}
+
   function clearCart() {
     setCart([])
     localStorage.removeItem("cart")
@@ -77,15 +89,9 @@ export default function Cart({
       .map((o: { id: string }) => `#${o.id.slice(0, 8).toUpperCase()}`)
       .join(" / ")
 
-    const itemsList = cart
-      .map((p) => `• ${p.name} (${p.quantity}x) — R$ ${(p.price * p.quantity).toFixed(2)}`)
-      .join("\n")
-
     const message =
-      `Olá! Meu nome é *${userName}*.\n` +
-      `🆔 *Pedido:* ${orderIds}\n\n` +
-      `🛍️ *Itens:*\n${itemsList}\n\n` +
-      `💰 *Total: R$ ${total}*\n\n` +
+    `Olá! Meu nome é *${userName}*.\n` +
+    `🆔 *Pedido:* ${orderIds}\n\n`+
       `Aguardo orientações para pagamento! 🙏`
 
     window.open(
@@ -265,7 +271,7 @@ export default function Cart({
                     type="tel"
                     placeholder="Ex: 31999999999"
                     value={userPhone}
-                    onChange={(e) => setUserPhone(e.target.value)}
+                    onChange={(e) => setUserPhone(formatPhone(e.target.value))}
                     className="border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-neutral-400 transition-all"
                   />
                 </div>

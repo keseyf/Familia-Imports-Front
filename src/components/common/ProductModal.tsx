@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Product } from "../../utils/interfaces";
 import { FiShoppingCart, FiX, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
@@ -10,7 +10,28 @@ interface Props {
 
 export default function ProductModal({ product, onAdd, onClose }: Props) {
   const [currentImage, setCurrentImage] = useState(0);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [visible, setVisible] = useState(false);
   const images = product.imageUrls ?? [];
+
+  // Fade-in do modal ao montar
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 10)
+    return () => clearTimeout(t)
+  }, [])
+
+  // Pré-carrega todas as imagens assim que o modal abre
+  useEffect(() => {
+    images.forEach(url => {
+      const img = new Image()
+      img.src = url
+    })
+  }, [])
+
+  // Reset do loading ao trocar imagem
+  useEffect(() => {
+    setImgLoaded(false)
+  }, [currentImage])
 
   function prev() {
     setCurrentImage(i => (i === 0 ? images.length - 1 : i - 1));
@@ -21,17 +42,18 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
   }
 
   return (
-    // Backdrop
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4"
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 transition-opacity duration-300 ${
+        visible ? "opacity-100" : "opacity-0"
+      }`}
     >
-      {/* Modal — stop propagation pra não fechar ao clicar dentro */}
       <div
         onClick={e => e.stopPropagation()}
-        className="relative bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+        className={`relative bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden transition-all duration-300 ${
+          visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4"
+        }`}
       >
-
         {/* Botão fechar */}
         <button
           onClick={onClose}
@@ -42,13 +64,24 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
 
         {/* Imagem */}
         <div className="relative w-full aspect-square bg-zinc-100 overflow-hidden">
+
+          {/* Spinner enquanto carrega */}
+          {!imgLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center z-10 bg-zinc-100">
+              <div className="w-8 h-8 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin" />
+            </div>
+          )}
+
           <img
+            key={currentImage}
             src={images[currentImage]}
             alt={product.name}
-            className="w-full h-full object-cover transition-all duration-300"
+            onLoad={() => setImgLoaded(true)}
+            className={`w-full h-full object-cover transition-opacity duration-300 ${
+              imgLoaded ? "opacity-100" : "opacity-0"
+            }`}
           />
 
-          {/* Setas — só aparecem se tiver mais de 1 imagem */}
           {images.length > 1 && (
             <>
               <button
@@ -66,7 +99,6 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
             </>
           )}
 
-          {/* Dots */}
           {images.length > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
               {images.map((_, i) => (
@@ -74,9 +106,7 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
                   key={i}
                   onClick={() => setCurrentImage(i)}
                   className={`rounded-full transition-all duration-200 ${
-                    i === currentImage
-                      ? "w-5 h-2 bg-white"
-                      : "w-2 h-2 bg-white/50 hover:bg-white/75"
+                    i === currentImage ? "w-5 h-2 bg-white" : "w-2 h-2 bg-white/50 hover:bg-white/75"
                   }`}
                 />
               ))}
@@ -103,7 +133,6 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
 
         {/* Info */}
         <div className="px-5 pt-4 pb-6 flex flex-col gap-4">
-
           <div className="flex flex-col gap-1">
             <span className="text-[10px] tracking-[0.2em] uppercase text-gray-400 font-medium">
               {product.category}
@@ -120,7 +149,6 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
             <span className="text-2xl font-black text-neutral-900 tracking-tight">
               R$ {Number(product.price).toFixed(2)}
             </span>
-
             <button
               onClick={() => { onAdd(product); onClose(); }}
               className="flex items-center gap-2 bg-accent text-white px-6 py-3 rounded-2xl hover:bg-gray-700 active:scale-95 transition-all duration-200 text-sm font-semibold"
@@ -129,7 +157,6 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
               Adicionar
             </button>
           </div>
-
         </div>
       </div>
     </div>

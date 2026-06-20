@@ -1,11 +1,11 @@
 export default function Footter() {
     return (
-        <div className="w-full bg-neutral-900 flex flex-col items-center justify-beetween px-5">
+        <div className="w-full bg-neutral-950 flex flex-col items-center justify-beetween px-5">
             <div className="flex items-center justify-center w-full">
 
                 <div>
 
-                    <img className="h-12 my-5" src={`./logodefinitiva23.png`} alt="" />
+                    <img onDoubleClick={()=>{window.location.href = "/admin"}} className="h-12 my-5" src={`./logodefinitiva23.png`} alt="" />
                 </div>
                 
             </div>

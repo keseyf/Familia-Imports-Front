@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from "react"
 import ScrollReveal from "scrollreveal"
 import {
-  BiSearch, BiX, BiPackage, BiTag,
-  BiChevronDown, BiMenu, BiLogOut, BiCog,
+ BiX, BiPackage, BiTag,
+  BiChevronDown, BiMenu, BiLogOut,
 } from "react-icons/bi"
 
 function getAdminFromToken() {
@@ -24,10 +24,8 @@ const navLinks = [
 
 export default function HeaderAdmin() {
   const [isSmall, setIsSmall]       = useState(false)
-  const [searchOpen, setSearchOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [searchValue, setSearchValue] = useState("")
 
   const profileRef = useRef<HTMLDivElement>(null)
   const admin = getAdminFromToken()
@@ -54,8 +52,8 @@ export default function HeaderAdmin() {
   }, [])
 
   function handleLogout() {
-    localStorage.removeItem("token")
-    window.location.href = "/admin/login"
+    localStorage.removeItem("adminToken")
+    window.location.href = "/admin"
   }
 
   return (
@@ -100,47 +98,6 @@ export default function HeaderAdmin() {
 
           {/* Direita */}
           <div className="flex items-center gap-2 ml-auto">
-
-            {/* Busca */}
-            <div className="relative hidden sm:flex items-center">
-              {searchOpen ? (
-                <div className="flex items-center gap-2">
-                  <BiSearch className={isSmall ? "text-gray-500" : "text-gray-400"} />
-                  <input
-                    autoFocus
-                    value={searchValue}
-                    onChange={e => setSearchValue(e.target.value)}
-                    onBlur={() => { if (!searchValue) setSearchOpen(false) }}
-                    placeholder="Buscar produto, pedido..."
-                    className={`text-sm w-48 border-b focus:outline-none bg-transparent ${
-                      isSmall
-                        ? "text-gray-800 border-gray-400 placeholder-gray-400"
-                        : "text-white border-gray-500 placeholder-gray-500"
-                    }`}
-                  />
-                  <button onClick={() => { setSearchOpen(false); setSearchValue("") }}>
-                    <BiX className={isSmall ? "text-gray-500" : "text-gray-400"} />
-                  </button>
-                </div>
-              ) : (
-                <button onClick={() => setSearchOpen(true)}
-                  className={`p-2 rounded-lg transition-all duration-200 ${
-                    isSmall ? "hover:bg-gray-100 text-gray-600" : "hover:bg-white/10 text-gray-300"
-                  }`}
-                >
-                  <BiSearch className="text-lg" />
-                </button>
-              )}
-            </div>
-
-            {/* Configurações */}
-            <a href="/admin/configuracoes"
-              className={`hidden sm:block p-2 rounded-lg transition-all duration-200 ${
-                isSmall ? "hover:bg-gray-100 text-gray-600" : "hover:bg-white/10 text-gray-300"
-              }`}
-            >
-              <BiCog className="text-lg" />
-            </a>
 
             {/* Perfil */}
             <div className="relative" ref={profileRef}>

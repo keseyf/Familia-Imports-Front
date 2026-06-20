@@ -6,7 +6,7 @@ interface CreateProductProps {
   category: string;
   price: number;
   key: string;
-  images: File[]; // array de imagens
+  images: File[];
 }
 
 export default async function CreateProductController({
@@ -17,14 +17,11 @@ export default async function CreateProductController({
   key,
   images,
 }: CreateProductProps) {
-
   try {
     if (!import.meta.env.VITE_API_URL) {
       throw new Error("VITE_API_URL não está definida no arquivo .env");
     }
-    if (!import.meta.env.VITE_IMAGE_UPLOAD_KEY) {
-      throw new Error("VITE_IMAGE_UPLOAD_KEY não está definida no arquivo .env");
-    }
+
     if (!name || !description || !category || !price || images.length === 0) {
       return { status: "error", message: "Todos os campos são obrigatórios" };
     }
@@ -33,49 +30,33 @@ export default async function CreateProductController({
       return { status: "error", message: "Acesso negado" };
     }
 
-    console.log(images)
-    const uploadPromises = images.map(async (image) => {
-      const formData = new FormData();
-      formData.append("image", image);
-      return await axios.post(
-        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_UPLOAD_KEY}`,
-        formData
-      );
-    });
+    // 1. Monta o FormData com os arquivos + campos
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("category", category);
+    formData.append("price", String(price));
+    formData.append("key", key);
+    images.forEach(img => formData.append("imgs", img)); // 👈 cada imagem separada
 
-    const uploadResponses = await Promise.all(uploadPromises);
-    const imageUrls = uploadResponses.map((res) => res.data.data.url);
-    console.log("URLs das imagens:", imageUrls);
-    console.log(uploadResponses);
-
-    // Cria produto com array de URLs
+    // 2. Envia como multipart/form-data
     const response = await axios.post(
       `${import.meta.env.VITE_API_URL}create/product`,
-      {
-        name,
-        description,
-        imageUrls,      // array com todas as URLs
-        category,
-        price,
-        key,
-      }
+      formData,
+      { headers: { "Content-Type": "multipart/form-data" } }
     );
 
-    if (response.data.status === 201){
-      return { status: response.data.status, message: "Sucesso! Produto criado com sucesso! Redirecionando..." };
-    }else if (response.data.status === 401){
-      return { status: response.data.status, message: "Key inválida. Acesso negado" };
-    }else if (response.data.status === 400){
-      return { status: response.data.status, message: "Dados inválidos. Verifique as informações e tente novamente." };
+    if (response.data.status === 201) {
+      return { status: 201, message: "Produto criado com sucesso!" };
+    } else if (response.data.status === 401) {
+      return { status: 401, message: "Key inválida. Acesso negado" };
+    } else {
+      return { status: 400, message: "Dados inválidos. Verifique as informações." };
     }
 
   } catch (error: any) {
     console.log(error.response?.data);
     console.log(error.message);
-
-    return {
-      status: "error",
-      message: "Erro ao criar produto. Verifique os dados e tente novamente.",
-    };
+    return { status: "error", message: "Erro ao criar produto." };
   }
 }

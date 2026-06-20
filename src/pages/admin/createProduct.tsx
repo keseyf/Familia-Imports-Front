@@ -121,7 +121,7 @@ export default function CreateProduct() {
                 className="w-full border border-zinc-200 bg-white rounded-2xl px-4 py-3.5 outline-none text-gray-800 focus:border-gray-400 focus:ring-2 focus:ring-gray-100 transition-all text-sm appearance-none cursor-pointer"
                 required
               >
-                <option value="">Selecionar...</option>
+                <option disabled value="">Selecionar...</option>
                 <option value="camisetas">Camiseta</option>
                 <option value="calcas">Calças</option>
                 <option value="short">Short</option>
@@ -255,8 +255,8 @@ export default function CreateProduct() {
         </form>
       </div>
 
-      {statusResponse?.type === "success" && <SuccessNotification message={statusResponse.message} />}
-      {statusResponse?.type === "error" && <ErrorNotification message={statusResponse.message} />}
+      {statusResponse?.type === "success" && <SuccessNotification onClose={()=>{}} message={statusResponse.message} />}
+      {statusResponse?.type === "error" && <ErrorNotification onClose={()=>{}} message={statusResponse.message} />}
     </div>
   );
 }

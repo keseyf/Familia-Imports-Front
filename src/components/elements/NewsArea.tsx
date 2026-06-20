@@ -52,7 +52,7 @@ export function NewsArea() {
           </h2>
 
           <a
-            href="#products-area"
+            href="#t1c"
             className="mt-5 animate-bounce rounded-xl bg-accent shadow-accent hover:shadow-2xl px-6 py-3 font-semibold text-white transition hover:scale-105 hover:bg-accent-hover"
           >
             Descubra

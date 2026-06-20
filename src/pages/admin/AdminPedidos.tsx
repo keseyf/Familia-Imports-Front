@@ -50,7 +50,7 @@ export default function AdminPedidos() {
   const [updatingId, setUpdatingId] = useState<string | null>(null)
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("adminToken")
     if (!token) { window.location.href = "/admin"; return }
     fetchOrders()
   }, [])

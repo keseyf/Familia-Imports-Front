@@ -289,7 +289,7 @@ export default function AdminPage() {
                 <div className="flex flex-col gap-1.5">
                   <label className={labelClass}>Categoria</label>
                   <select className={inputClass} value={updateCategory} onChange={e => setUpdateCategory(e.target.value)}>
-                    <option value="">Selecionar...</option>
+                    <option disabled value="">Selecionar...</option>
                     <option value="camisetas">Camiseta</option>
                     <option value="calcas">Calças</option>
                     <option value="short">Short</option>
