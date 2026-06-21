@@ -64,7 +64,7 @@ export default function HeaderAdmin() {
       className={`w-full duration-300 sticky ${isSmall ? "top-3 px-3" : "top-0"} z-50`}
     >
       <div className={`w-full border border-black/30 duration-300 shadow-xl backdrop-blur-md ${
-        isSmall ? "bg-white/90 rounded-2xl p-3" : "bg-gray-950 px-8 p-4 text-gray-200"
+        isSmall ? "bg-white/90 rounded-2xl p-3" : "bg-primary px-8 p-4 text-gray-200"
       }`}>
         <div className="flex items-center justify-between gap-4 px-2">
 
