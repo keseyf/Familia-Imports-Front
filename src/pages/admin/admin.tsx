@@ -171,10 +171,10 @@ export default function AdminPage() {
                     type="button"
                     onClick={() => selectProduct(product)}
                     className={`flex flex-col rounded-2xl border-2 overflow-hidden text-left transition-all duration-200 ${selectedProduct?.id === product.id
-                        ? accent === "red"
-                          ? "border-red-500 shadow-md shadow-red-100"
-                          : "border-gray-900 shadow-md shadow-gray-100"
-                        : "border-zinc-200 hover:border-gray-300"
+                      ? accent === "red"
+                        ? "border-red-500 shadow-md shadow-red-100"
+                        : "border-gray-900 shadow-md shadow-gray-100"
+                      : "border-zinc-200 hover:border-gray-300"
                       }`}
                   >
                     <div className="aspect-square w-full bg-zinc-100 overflow-hidden">
@@ -293,7 +293,8 @@ export default function AdminPage() {
                     <option value="camisetas">Camiseta</option>
                     <option value="calcas">Calças</option>
                     <option value="short">Short</option>
-                    <option value="conjunto">Conjunto</option>
+                    <option value="conjuntoM">Conjunto Masculino</option>
+                    <option value="conjuntoF">Conjunto Feminino</option>
                     <option value="bobojaco">Bobojaco</option>
                     <option value="moletom">Moletom</option>
                     <option value="jaqueta">Jaqueta</option>
@@ -362,8 +363,8 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {statusResponse?.type === "success" && <SuccessNotification onClose={()=>{}} message={statusResponse.message} />}
-      {statusResponse?.type === "error" && <ErrorNotification onClose={()=>{}} message={statusResponse.message} />}
+      {statusResponse?.type === "success" && <SuccessNotification onClose={() => { }} message={statusResponse.message} />}
+      {statusResponse?.type === "error" && <ErrorNotification onClose={() => { }} message={statusResponse.message} />}
     </div>
   );
 }

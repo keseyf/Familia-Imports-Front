@@ -44,7 +44,7 @@ export default function CreateProduct() {
       return;
     }
     setLoading(true);
-    if(value.includes(",")) {
+    if (value.includes(",")) {
       setValue(value.replace(",", "."));
     }
     const response = await CreateProductController({
@@ -57,10 +57,10 @@ export default function CreateProduct() {
     });
     setLoading(false);
     setStatusResponse(
-  response?.status === 201
-    ? { type: "success", message: response?.message ?? "Sucesso!" }
-    : { type: "error", message: response?.message ?? "Erro ao criar produto." }
-);
+      response?.status === 201
+        ? { type: "success", message: response?.message ?? "Sucesso!" }
+        : { type: "error", message: response?.message ?? "Erro ao criar produto." }
+    );
 
     setTimeout(() => {
       setStatusResponse(null);
@@ -125,7 +125,8 @@ export default function CreateProduct() {
                 <option value="camisetas">Camiseta</option>
                 <option value="calcas">Calças</option>
                 <option value="short">Short</option>
-                <option value="conjunto">Conjunto</option>
+                <option value="conjuntoM">Conjunto Masculino</option>
+                <option value="conjuntoF">Conjunto Feminino</option>
                 <option value="bobojaco">Bobojaco</option>
                 <option value="moletom">Moletom</option>
                 <option value="jaqueta">Jaqueta</option>
@@ -175,11 +176,10 @@ export default function CreateProduct() {
               onDragLeave={() => setDragging(false)}
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
-              className={`relative border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 ${
-                dragging
+              className={`relative border-2 border-dashed rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all duration-200 ${dragging
                   ? "border-gray-400 bg-gray-50 scale-[1.01]"
                   : "border-zinc-200 bg-white hover:border-gray-300 hover:bg-gray-50"
-              }`}
+                }`}
             >
               <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center">
                 <BiImage className="text-gray-400 text-xl" />
@@ -235,17 +235,16 @@ export default function CreateProduct() {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 mt-1 ${
-              loading
+            className={`w-full py-4 rounded-2xl font-semibold text-sm transition-all duration-200 mt-1 ${loading
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-gray-900 text-white hover:bg-gray-700 active:scale-[0.99]"
-            }`}
+              }`}
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                 </svg>
                 Processando...
               </span>
@@ -255,8 +254,8 @@ export default function CreateProduct() {
         </form>
       </div>
 
-      {statusResponse?.type === "success" && <SuccessNotification onClose={()=>{}} message={statusResponse.message} />}
-      {statusResponse?.type === "error" && <ErrorNotification onClose={()=>{}} message={statusResponse.message} />}
+      {statusResponse?.type === "success" && <SuccessNotification onClose={() => { }} message={statusResponse.message} />}
+      {statusResponse?.type === "error" && <ErrorNotification onClose={() => { }} message={statusResponse.message} />}
     </div>
   );
 }

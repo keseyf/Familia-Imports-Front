@@ -11,7 +11,7 @@ import type { Product } from "../utils/interfaces";
       setLoading(true);
 
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}allProducts`
+        `${import.meta.env.VITE_API_URL}products`
       );
       setProducts(response.data.products);
 
