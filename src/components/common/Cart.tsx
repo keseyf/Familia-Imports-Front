@@ -42,16 +42,16 @@ export default function Cart({
   }
 
   // Adiciona essa função antes do return
-function formatPhone(value: string) {
-  // Remove tudo que não for número
-  const digits = value.replace(/\D/g, "").slice(0, 11)
+  function formatPhone(value: string) {
+    // Remove tudo que não for número
+    const digits = value.replace(/\D/g, "").slice(0, 11)
 
-  if (digits.length <= 2) return `(${digits}`
-  if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
-  if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
-  // 11 dígitos — celular: (xx) xxxxx-xxxx
-  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
-}
+    if (digits.length <= 2) return `(${digits}`
+    if (digits.length <= 6) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`
+    if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
+    // 11 dígitos — celular: (xx) xxxxx-xxxx
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
+  }
 
   function clearCart() {
     setCart([])
@@ -65,49 +65,53 @@ function formatPhone(value: string) {
   }
 
   async function confirmOrder() {
-  if (!userName.trim() || !userPhone.trim()) {
-    setError("Preencha seu nome e telefone.")
-    return
+    if (!userName.trim() || !userPhone.trim()) {
+      setError("Preencha seu nome e telefone.")
+      return
+    }
+
+    setLoading(true)
+    setError("")
+
+    try {
+      const result = await createOrder({
+        items: cart.map((p) => ({
+          productId: String(p.id),
+          quantity: p.quantity,
+          totalPrice: p.price * p.quantity,
+        })),
+        userName,
+        userPhone,
+      })
+
+      const orderIds = result.orders
+        .map((o: { id: string }) => `#${o.id.slice(0, 8).toUpperCase()}`)
+        .join(" / ")
+
+      const message =
+        `Olá! Meu nome é *${userName}*.\n` +
+        `🆔 *Pedido:* ${orderIds}\n\n` +
+        `Aguardo orientações para pagamento! 🙏`
+
+      const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent)
+
+      const url = isMobile
+        ? `whatsapp://send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}`  // iOS/Android → abre o app com texto preenchido ✅
+        : `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`          // Desktop → abre via browser ✅
+
+      window.open(url, "_blank")
+
+      clearCart()
+      setCheckoutOpen(false)
+      setUserName("")
+      setUserPhone("")
+      setOpen(false)
+    } catch (err: any) {
+      setError(err.message ?? "Erro inesperado. Tente novamente.")
+    } finally {
+      setLoading(false)
+    }
   }
-
-  setLoading(true)
-  setError("")
-
-  try {
-    const result = await createOrder({
-      items: cart.map((p) => ({
-        productId: String(p.id),
-        quantity: p.quantity,
-        totalPrice: p.price * p.quantity,
-      })),
-      userName,
-      userPhone,
-    })
-
-    const orderIds = result.orders
-      .map((o: { id: string }) => `#${o.id.slice(0, 8).toUpperCase()}`)
-      .join(" / ")
-
-    const message =
-    `Olá! Meu nome é *${userName}*.\n` +
-    `🆔 *Pedido:* ${orderIds}\n\n`+
-      `Aguardo orientações para pagamento! 🙏`
-
-    const url = `whatsapp://send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}`
-    
-    window.open(url, "_blank")
-
-    clearCart()
-    setCheckoutOpen(false)
-    setUserName("")
-    setUserPhone("")
-    setOpen(false)
-  } catch (err: any) {
-    setError(err.message ?? "Erro inesperado. Tente novamente.")
-  } finally {
-    setLoading(false)
-  }
-}
 
   return (
     <>

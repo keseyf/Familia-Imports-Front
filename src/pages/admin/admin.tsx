@@ -13,6 +13,160 @@ import axios from "axios";
 
 type Tab = "criar" | "atualizar" | "deletar";
 
+// ⬇️ Movido para fora do AdminPage. Assim a função mantém a mesma
+// identidade entre renders e o React não desmonta/remonta o input
+// de busca (e perde o foco) a cada tecla digitada.
+function ProductCarousel({
+  accent,
+  search,
+  setSearch,
+  filteredProducts,
+  productsLoading,
+  carouselIndex,
+  setCarouselIndex,
+  selectedProduct,
+  selectProduct,
+  inputClass,
+  labelClass,
+  VISIBLE,
+}: {
+  accent?: string
+  search: string
+  setSearch: (v: string) => void
+  filteredProducts: Product[]
+  productsLoading: boolean
+  carouselIndex: number
+  setCarouselIndex: React.Dispatch<React.SetStateAction<number>>
+  selectedProduct: Product | null
+  selectProduct: (p: Product) => void
+  inputClass: string
+  labelClass: string
+  VISIBLE: number
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <label className={labelClass}>Selecione o produto</label>
+
+      <div className="relative">
+        <input
+          type="text"
+          value={search}
+          onChange={e => {
+            setSearch(e.target.value)
+            setCarouselIndex(0)
+          }}
+          placeholder="Buscar produto pelo nome..."
+          className={inputClass}
+        />
+        {search && (
+          <button
+            type="button"
+            onClick={() => { setSearch(""); setCarouselIndex(0) }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-all"
+          >
+            ✕
+          </button>
+        )}
+      </div>
+
+      {productsLoading ? (
+        <div className="flex items-center justify-center py-10">
+          <svg className="animate-spin w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+          </svg>
+        </div>
+      ) : filteredProducts.length === 0 ? (
+        <div className="flex items-center justify-center py-10 text-sm text-gray-400">
+          {search ? `Nenhum produto encontrado para "${search}"` : "Nenhum produto encontrado."}
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setCarouselIndex(i => i - 1)}
+              disabled={carouselIndex === 0}
+              className="w-9 h-9 flex items-center justify-center rounded-xl border border-zinc-200 bg-white text-gray-400 hover:text-gray-700 hover:border-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <BiChevronLeft className="text-xl" />
+            </button>
+
+            <div className="flex-1 grid grid-cols-3 gap-3 overflow-hidden">
+              {filteredProducts.slice(carouselIndex, carouselIndex + VISIBLE).map(product => (
+                <button
+                  key={product.id}
+                  type="button"
+                  onClick={() => selectProduct(product)}
+                  className={`flex flex-col rounded-2xl border-2 overflow-hidden text-left transition-all duration-200 ${
+                    selectedProduct?.id === product.id
+                      ? accent === "red"
+                        ? "border-red-500 shadow-md shadow-red-100"
+                        : "border-gray-900 shadow-md shadow-gray-100"
+                      : "border-zinc-200 hover:border-gray-300"
+                  }`}
+                >
+                  <div className="aspect-square w-full bg-zinc-100 overflow-hidden">
+                    {product.imageUrls?.[0] ? (
+                      <img src={product.imageUrls[0]} alt={product.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <BiPackage className="text-zinc-300 text-3xl" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2">
+                    <p className="text-xs font-semibold text-gray-800 truncate">{product.name}</p>
+                    <p className="text-xs text-gray-400">R$ {product.price}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setCarouselIndex(i => i + 1)}
+              disabled={carouselIndex + VISIBLE >= filteredProducts.length}
+              className="w-9 h-9 flex items-center justify-center rounded-xl border border-zinc-200 bg-white text-gray-400 hover:text-gray-700 hover:border-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <BiChevronRight className="text-xl" />
+            </button>
+          </div>
+
+          <div className="flex justify-center gap-1.5">
+            {Array.from({ length: Math.ceil(filteredProducts.length / VISIBLE) }).map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setCarouselIndex(i * VISIBLE)}
+                className={`w-1.5 h-1.5 rounded-full transition-all ${
+                  Math.floor(carouselIndex / VISIBLE) === i ? "bg-gray-900 w-4" : "bg-zinc-300"
+                }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {selectedProduct && (
+        <div className={`flex items-center gap-3 p-3 rounded-2xl border ${
+          accent === "red" ? "bg-red-50 border-red-100" : "bg-gray-50 border-zinc-200"
+        }`}>
+          <img
+            src={selectedProduct.imageUrls?.[0] ?? ""}
+            alt={selectedProduct.name}
+            className="w-10 h-10 rounded-xl object-cover bg-zinc-200"
+          />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-800 truncate">{selectedProduct.name}</p>
+            <p className="text-xs text-gray-400 truncate">{selectedProduct.id}</p>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function AdminPage() {
   const [authorized, setAuthorized] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -31,8 +185,23 @@ export default function AdminPage() {
   const [updateKey, setUpdateKey] = useState("");
   const [deleteKey, setDeleteKey] = useState("");
 
-  // Verifica se é admin ao montar
+  const [search, setSearch] = useState("")
 
+  // Reseta a busca, seleção e carrossel ao trocar de aba, e recarrega os produtos
+  useEffect(() => {
+    if (activeTab === "atualizar" || activeTab === "deletar") {
+      fetchProducts({ setLoading: setProductsLoading, setProducts })
+      setSelectedProduct(null)
+      setCarouselIndex(0)
+      setSearch("")
+    }
+  }, [activeTab])
+
+  const filteredProducts = products.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase())
+  )
+
+  // Verifica se é admin ao montar
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
     if (!token) {
@@ -50,15 +219,6 @@ export default function AdminPage() {
       })
       .finally(() => setChecking(false));
   }, []);
-
-
-  useEffect(() => {
-    if (activeTab === "atualizar" || activeTab === "deletar") {
-      fetchProducts({ setLoading: setProductsLoading, setProducts });
-      setSelectedProduct(null);
-      setCarouselIndex(0);
-    }
-  }, [activeTab]);
 
   // Carregando verificação
   if (checking) {
@@ -90,8 +250,6 @@ export default function AdminPage() {
   }
 
   const VISIBLE = 3;
-  const canPrev = carouselIndex > 0;
-  const canNext = carouselIndex + VISIBLE < products.length;
 
   async function handleUpdate(e: React.FormEvent) {
     e.preventDefault();
@@ -136,107 +294,6 @@ export default function AdminPage() {
     { id: "deletar", label: "Deletar", icon: <BiTrash className="text-lg" /> },
   ];
 
-  function ProductCarousel({ accent }: { accent?: string }) {
-    return (
-      <div className="flex flex-col gap-3">
-        <label className={labelClass}>Selecione o produto</label>
-
-        {productsLoading ? (
-          <div className="flex items-center justify-center py-10">
-            <svg className="animate-spin w-6 h-6 text-gray-400" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-          </div>
-        ) : products.length === 0 ? (
-          <div className="flex items-center justify-center py-10 text-sm text-gray-400">
-            Nenhum produto encontrado.
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setCarouselIndex(i => i - 1)}
-                disabled={!canPrev}
-                className="w-9 h-9 flex items-center justify-center rounded-xl border border-zinc-200 bg-white text-gray-400 hover:text-gray-700 hover:border-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-              >
-                <BiChevronLeft className="text-xl" />
-              </button>
-
-              <div className="flex-1 grid grid-cols-3 gap-3 overflow-hidden">
-                {products.slice(carouselIndex, carouselIndex + VISIBLE).map(product => (
-                  <button
-                    key={product.id}
-                    type="button"
-                    onClick={() => selectProduct(product)}
-                    className={`flex flex-col rounded-2xl border-2 overflow-hidden text-left transition-all duration-200 ${selectedProduct?.id === product.id
-                      ? accent === "red"
-                        ? "border-red-500 shadow-md shadow-red-100"
-                        : "border-gray-900 shadow-md shadow-gray-100"
-                      : "border-zinc-200 hover:border-gray-300"
-                      }`}
-                  >
-                    <div className="aspect-square w-full bg-zinc-100 overflow-hidden">
-                      {product.imageUrls?.[0] ? (
-                        <img src={product.imageUrls[0]} alt={product.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <BiPackage className="text-zinc-300 text-3xl" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-semibold text-gray-800 truncate">{product.name}</p>
-                      <p className="text-xs text-gray-400">R$ {product.price}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setCarouselIndex(i => i + 1)}
-                disabled={!canNext}
-                className="w-9 h-9 flex items-center justify-center rounded-xl border border-zinc-200 bg-white text-gray-400 hover:text-gray-700 hover:border-gray-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-              >
-                <BiChevronRight className="text-xl" />
-              </button>
-            </div>
-
-            {/* Indicador */}
-            <div className="flex justify-center gap-1.5">
-              {Array.from({ length: Math.ceil(products.length / VISIBLE) }).map((_, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => setCarouselIndex(i * VISIBLE)}
-                  className={`w-1.5 h-1.5 rounded-full transition-all ${Math.floor(carouselIndex / VISIBLE) === i ? "bg-gray-900 w-4" : "bg-zinc-300"
-                    }`}
-                />
-              ))}
-            </div>
-          </>
-        )}
-
-        {/* Produto selecionado */}
-        {selectedProduct && (
-          <div className={`flex items-center gap-3 p-3 rounded-2xl border ${accent === "red" ? "bg-red-50 border-red-100" : "bg-gray-50 border-zinc-200"}`}>
-            <img
-              src={selectedProduct.imageUrls?.[0] ?? ""}
-              alt={selectedProduct.name}
-              className="w-10 h-10 rounded-xl object-cover bg-zinc-200"
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-800 truncate">{selectedProduct.name}</p>
-              <p className="text-xs text-gray-400 truncate">{selectedProduct.id}</p>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-zinc-50">
       <HeaderAdmin />
@@ -276,7 +333,19 @@ export default function AdminPage() {
           {/* Tab: Atualizar */}
           {activeTab === "atualizar" && (
             <form onSubmit={handleUpdate} className="flex flex-col gap-5">
-              <ProductCarousel />
+              <ProductCarousel
+                search={search}
+                setSearch={setSearch}
+                filteredProducts={filteredProducts}
+                productsLoading={productsLoading}
+                carouselIndex={carouselIndex}
+                setCarouselIndex={setCarouselIndex}
+                selectedProduct={selectedProduct}
+                selectProduct={selectProduct}
+                inputClass={inputClass}
+                labelClass={labelClass}
+                VISIBLE={VISIBLE}
+              />
               <div className="flex flex-col gap-1.5">
                 <label className={labelClass}>Nome</label>
                 <input className={inputClass} placeholder="Deixe em branco para não alterar" value={updateName} onChange={e => setUpdateName(e.target.value)} />
@@ -336,7 +405,20 @@ export default function AdminPage() {
               <div className="p-4 bg-red-50 border border-red-100 rounded-2xl">
                 <p className="text-sm text-red-500 font-medium">⚠️ Atenção: essa ação é irreversível.</p>
               </div>
-              <ProductCarousel accent="red" />
+              <ProductCarousel
+                accent="red"
+                search={search}
+                setSearch={setSearch}
+                filteredProducts={filteredProducts}
+                productsLoading={productsLoading}
+                carouselIndex={carouselIndex}
+                setCarouselIndex={setCarouselIndex}
+                selectedProduct={selectedProduct}
+                selectProduct={selectProduct}
+                inputClass={inputClass}
+                labelClass={labelClass}
+                VISIBLE={VISIBLE}
+              />
               <div className="flex flex-col gap-1.5">
                 <label className={labelClass}>Key de autenticação *</label>
                 <input type="password" className={inputClass} placeholder="••••••••" value={deleteKey} onChange={e => setDeleteKey(e.target.value)} required />

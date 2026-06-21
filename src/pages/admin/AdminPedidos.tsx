@@ -17,6 +17,7 @@ interface Product {
 
 interface Order {
   id: string
+  groupId: string
   product: Product
   quantity: number
   totalPrice: number
@@ -43,61 +44,80 @@ const filters = [
   { key: "cancelled", label: "Cancelado" },
 ]
 
-function OrderCard({
-  order,
-  onStatusChange,
-  onDelete,
-  updating,
-}: {
-  order: Order
-  onStatusChange: (id: string, status: OrderStatus) => void
-  onDelete: (id: string) => void
-  updating: boolean
-}) {
-  const cfg = statusConfig[order.status]
+function OrderCard({ order }: { order: Order }) {
   const date = new Date(order.createdAt).toLocaleString("pt-BR", {
     day: "2-digit", month: "2-digit", year: "numeric",
     hour: "2-digit", minute: "2-digit",
   })
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center hover:shadow-md transition-all duration-200">
-
+    <div className="bg-white rounded-2xl border border-gray-100 p-4 flex items-center gap-4">
       <img
         src={order.product.imageUrls?.[0] ?? "/placeholder.png"}
         alt={order.product.name}
-        className="w-16 h-16 object-cover rounded-xl border border-gray-100 shrink-0"
+        className="w-14 h-14 object-cover rounded-xl border border-gray-100 shrink-0"
       />
-
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-mono text-gray-400">
-            #{order.id.slice(0, 8).toUpperCase()}
+        <h3 className="font-semibold text-gray-800 text-sm truncate">
+          {order.product.name}{" "}
+          <span className="text-gray-400 font-normal">({order.quantity}x)</span>
+        </h3>
+        <p className="text-xs text-gray-400 mt-0.5">{order.product.category}</p>
+      </div>
+      <div className="text-right shrink-0">
+        <p className="font-black text-gray-900 text-sm">R$ {order.totalPrice.toFixed(2)}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{date}</p>
+      </div>
+    </div>
+  )
+}
+
+function OrderGroup({
+  groupId,
+  orders,
+  onStatusChange,
+  onDelete,
+  updating,
+}: {
+  groupId: string
+  orders: Order[]
+  onStatusChange: (groupId: string, status: OrderStatus) => void
+  onDelete: (groupId: string) => void
+  updating: boolean
+}) {
+  const first = orders[0]
+  const totalGroup = orders.reduce((s, o) => s + o.totalPrice, 0)
+  const cfg = statusConfig[first.status]
+
+  return (
+    <div className="flex flex-col gap-2 bg-gray-50 border border-gray-100 rounded-3xl p-4">
+      <div className="flex items-center justify-between flex-wrap gap-3 px-1 mb-1">
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="text-xs font-mono font-bold text-gray-500">
+            #{groupId.slice(0, 8).toUpperCase()}
           </span>
           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${cfg.color}`}>
             {cfg.label}
           </span>
+          <span className="text-xs text-gray-400">
+            {orders.length} {orders.length === 1 ? "item" : "itens"} · R$ {totalGroup.toFixed(2)}
+          </span>
         </div>
-        <h3 className="font-semibold text-gray-800 text-sm mt-1">
-          {order.product.name}{" "}
-          <span className="text-gray-400 font-normal">({order.quantity}x)</span>
-        </h3>
-        <p className="text-xs text-gray-400 mt-0.5 flex flex-wrap gap-3">
-          <span>👤 {order.userName}</span>
-          <span>📱 {order.userPhone}</span>
-          <span>🕐 {date}</span>
-        </p>
-      </div>
-
-      <div className="flex flex-row sm:flex-col items-center sm:items-end gap-3 sm:gap-2 shrink-0 w-full sm:w-auto">
-        <span className="font-black text-gray-900 text-base">
-          R$ {order.totalPrice.toFixed(2)}
-        </span>
 
         <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400">👤 {first.userName}</span>
+          <span className="text-xs text-gray-400">📱 {first.userPhone}</span>
+          <a
+            href={`https://wa.me/55${first.userPhone.replace(/\D/g, "")}`}
+            target="_blank"
+            rel="noreferrer"
+            className="p-1.5 rounded-lg bg-green-50 hover:bg-green-100 text-green-600 transition-all"
+          >
+            <FaWhatsapp className="text-sm" />
+          </a>
           <select
-            value={order.status}
-            onChange={e => onStatusChange(order.id, e.target.value as OrderStatus)}
+            value={first.status}
+            onChange={e => onStatusChange(groupId, e.target.value as OrderStatus)}
             disabled={updating}
             className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-700 focus:outline-none focus:border-gray-400 disabled:opacity-50 cursor-pointer"
           >
@@ -107,29 +127,23 @@ function OrderCard({
             <option value="delivered">Entregue</option>
             <option value="cancelled">Cancelado</option>
           </select>
-
-          <a
-            href={`https://wa.me/55${order.userPhone.replace(/\D/g, "")}`}
-            target="_blank"
-            rel="noreferrer"
-            title="Falar com cliente"
-            className="p-2 rounded-xl bg-green-50 hover:bg-green-100 text-green-600 transition-all"
-          >
-            <FaWhatsapp className="text-base" />
-          </a>
-
           <button
-            onClick={() => onDelete(order.id)}
-            title="Deletar pedido"
-            className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 transition-all"
+            onClick={() => onDelete(groupId)}
+            disabled={updating}
+            className="p-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-500 transition-all disabled:opacity-40"
           >
-            <TbTrash className="text-base" />
+            <TbTrash className="text-sm" />
           </button>
+          {updating && (
+            <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+          )}
         </div>
+      </div>
 
-        {updating && (
-          <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-        )}
+      <div className="flex flex-col gap-2">
+        {orders.map(order => (
+          <OrderCard key={order.id} order={order} />
+        ))}
       </div>
     </div>
   )
@@ -142,6 +156,7 @@ export default function AdminPedidos() {
   const [error, setError] = useState("")
   const [filter, setFilter] = useState("all")
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [search, setSearch] = useState("")
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken")
@@ -163,11 +178,12 @@ export default function AdminPedidos() {
     }
   }
 
-  async function handleStatusChange(id: string, status: OrderStatus) {
-    setUpdatingId(id)
+  // ✅ função separada, no nível do componente
+  async function handleStatusChange(groupId: string, status: OrderStatus) {
+    setUpdatingId(groupId)
     try {
-      await updateOrderStatus({ id, status })
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o))
+      await updateOrderStatus({ groupId, status })
+      setOrders(prev => prev.map(o => o.groupId === groupId ? { ...o, status } : o))
     } catch (err: any) {
       alert(err.message ?? "Erro ao atualizar status")
     } finally {
@@ -175,20 +191,43 @@ export default function AdminPedidos() {
     }
   }
 
-  async function handleDelete(id: string) {
+  // ✅ função separada, no nível do componente
+  async function handleDelete(groupId: string) {
     if (!confirm("Tem certeza que deseja deletar este pedido?")) return
     try {
-      await deleteOrder(id)
-      setOrders(prev => prev.filter(o => o.id !== id))
+      await deleteOrder(groupId)
+      setOrders(prev => prev.filter(o => o.groupId !== groupId))
     } catch (err: any) {
       alert(err.message ?? "Erro ao deletar pedido")
     }
   }
 
+  // ✅ no nível do componente
   if (!authorized) return null
 
-  const filtered = filter === "all" ? orders : orders.filter(o => o.status === filter)
+  const filtered = orders
+    .filter(o => filter === "all" || o.status === filter)
+    .filter(o => {
+      if (!search.trim()) return true
+      const q = search.toLowerCase()
+      return (
+        o.groupId.toLowerCase().includes(q) ||
+        o.userName.toLowerCase().includes(q) ||
+        o.userPhone.replace(/\D/g, "").includes(q.replace(/\D/g, "")) ||
+        o.product.name.toLowerCase().includes(q)
+      )
+    })
+
+  const groupedOrders = filtered.reduce((acc, order) => {
+    if (!acc[order.groupId]) acc[order.groupId] = []
+    acc[order.groupId].push(order)
+    return acc
+  }, {} as Record<string, Order[]>)
+
   const pendingCount = orders.filter(o => o.status === "pending").length
+  const groupCount = Object.keys(
+    orders.reduce((acc, o) => ({ ...acc, [o.groupId]: true }), {} as Record<string, boolean>)
+  ).length
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -199,13 +238,31 @@ export default function AdminPedidos() {
           <div>
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">Pedidos</h1>
             <p className="text-sm text-gray-400 mt-0.5">
-              {orders.length} pedido{orders.length !== 1 ? "s" : ""} no total
+              {groupCount} pedido{groupCount !== 1 ? "s" : ""} · {orders.length} {orders.length === 1 ? "item" : "itens"} no total
             </p>
           </div>
           {pendingCount > 0 && (
             <span className="bg-amber-100 text-amber-700 text-sm font-semibold px-4 py-2 rounded-full border border-amber-200">
               {pendingCount} aguardando
             </span>
+          )}
+        </div>
+
+        <div className="relative mb-4">
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar por nome, telefone, produto ou ID..."
+            className="w-full bg-white border border-gray-200 rounded-2xl px-4 py-3 pr-10 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-all"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-all"
+            >
+              ✕
+            </button>
           )}
         </div>
 
@@ -231,20 +288,23 @@ export default function AdminPedidos() {
           </div>
         ) : error ? (
           <div className="text-center text-red-500 py-20">{error}</div>
-        ) : filtered.length === 0 ? (
+        ) : Object.keys(groupedOrders).length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 gap-3">
             <BiPackage className="text-5xl text-gray-200" />
-            <p className="text-gray-400 text-sm">Nenhum pedido encontrado</p>
+            <p className="text-gray-400 text-sm">
+              {search ? `Nenhum pedido encontrado para "${search}"` : "Nenhum pedido encontrado"}
+            </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {filtered.map(order => (
-              <OrderCard
-                key={order.id}
-                order={order}
+          <div className="flex flex-col gap-4">
+            {Object.entries(groupedOrders).map(([groupId, groupOrders]) => (
+              <OrderGroup
+                key={groupId}
+                groupId={groupId}
+                orders={groupOrders}
                 onStatusChange={handleStatusChange}
                 onDelete={handleDelete}
-                updating={updatingId === order.id}
+                updating={updatingId === groupId}
               />
             ))}
           </div>

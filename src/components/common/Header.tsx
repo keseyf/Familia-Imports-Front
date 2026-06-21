@@ -3,13 +3,14 @@ import { BiMenu, BiX } from "react-icons/bi"
 import ScrollReveal from "scrollreveal"
 
 const navLinks = [
+  { label: "Conjuntos Masculinos", href: "#conjuntoM" },
+  { label: "Conjuntos Femininos", href: "#conjuntoF" },
   { label: "Camisetas", href: "#camisetas" },
-  { label: "Calças",    href: "#calcas" },
-  { label: "Shorts",    href: "#short" },
-  { label: "Conjuntos", href: "#conjunto" },
   { label: "Bobojaco",  href: "#bobojaco" },
   { label: "Moletom",   href: "#moletom" },
   { label: "Jaquetas",  href: "#jaqueta" },
+  { label: "Calças",    href: "#calcas" },
+  { label: "Shorts",    href: "#short" },
   { label: "Tênis",     href: "#tenis" },
   { label: "Acessórios",href: "#acessorios" },
 ]

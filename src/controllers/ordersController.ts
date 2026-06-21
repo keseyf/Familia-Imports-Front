@@ -40,9 +40,18 @@ export async function createOrder(payload: CreateOrderPayload) {
 
 // controllers/ordersController.ts — adiciona essa função
 
-export async function deleteOrder(id: string) {
+export async function updateOrderStatus({ groupId, status }: { groupId: string; status: string }) {
   try {
-    const { data } = await api.delete(`/orders/delete/${id}`)
+    const { data } = await api.patch(`/orders/${groupId}/status`, { status })
+    return data
+  } catch (err: any) {
+    throw new Error(err.response?.data?.message ?? "Erro ao atualizar status")
+  }
+}
+
+export async function deleteOrder(groupId: string) {
+  try {
+    const { data } = await api.delete(`/orders/${groupId}`)
     return data
   } catch (err: any) {
     throw new Error(err.response?.data?.message ?? "Erro ao deletar pedido")
@@ -56,14 +65,5 @@ export async function getOrders() {
   } catch (err: any) {
     if (err.response?.status === 401) throw new Error("401")
     throw new Error(err.response?.data?.message ?? "Erro ao buscar pedidos")
-  }
-}
-
-export async function updateOrderStatus({ id, status }: UpdateOrderStatusPayload) {
-  try {
-    const { data } = await api.patch(`/orders/${id}/status`, { status })
-    return data
-  } catch (err: any) {
-    throw new Error(err.response?.data?.message ?? "Erro ao atualizar status")
   }
 }
