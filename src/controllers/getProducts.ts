@@ -1,28 +1,18 @@
-import axios from "axios";
-import type { Product } from "../utils/interfaces";
+// controllers/getProducts.ts
+import axios from "axios"
+import type { Product } from "../utils/interfaces"
 
-// Buscar produtos
-  export async function fetchProducts({ setLoading, setProducts }: {setLoading: React.Dispatch<React.SetStateAction<boolean>>, setProducts: React.Dispatch<React.SetStateAction<Product[]>>}) {
-    if (!import.meta.env.VITE_API_URL) {
-      throw new Error("VITE_API_URL não está definida no arquivo .env");
-    }
-    try {
+export async function fetchProductsByCategory(category: string, page = 1): Promise<{
+  products: Product[]
+  hasMore: boolean
+}> {
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}products`, {
+    params: { category, page, limit: 8 }
+  })
+  return response.data
+}
 
-      setLoading(true);
-
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}products`
-      );
-      setProducts(response.data.products);
-
-
-    } catch (err) {
-
-      console.error(err);
-
-    } finally {
-
-      setLoading(false);
-
-    }
-  }
+export async function fetchCategoryCounts(): Promise<{ category: string; total: number }[]> {
+  const response = await axios.get(`${import.meta.env.VITE_API_URL}products/counts`)
+  return response.data.counts
+}

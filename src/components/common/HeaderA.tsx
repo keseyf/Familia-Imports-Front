@@ -3,6 +3,7 @@ import ScrollReveal from "scrollreveal"
 import {
  BiX, BiPackage, BiTag,
   BiChevronDown, BiMenu, BiLogOut,
+  BiHome,
 } from "react-icons/bi"
 
 function getAdminFromToken() {
@@ -20,6 +21,7 @@ function getAdminFromToken() {
 const navLinks = [
   { label: "Produtos", href: "/admin",         icon: <BiTag /> },
   { label: "Pedidos",  href: "/admin/pedidos",  icon: <BiPackage /> },
+  { label: "Inicio", href: "/", icon: <BiHome/>}
 ]
 
 export default function HeaderAdmin() {
@@ -70,7 +72,7 @@ export default function HeaderAdmin() {
           <a href="/admin" className="flex items-center gap-2 hover:scale-90 duration-200 shrink-0">
             <img
               className="w-36"
-              src={isSmall ? "./logodefinitiva.png" : "./logodefinitiva23.png"}
+              src={isSmall ? "/logodefinitiva.png" : "/logodefinitiva23.png"}
               alt="Logo"
             />
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${

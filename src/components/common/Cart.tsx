@@ -145,12 +145,12 @@ function formatPhone(value: string) {
                 >
                   <BiX className="text-xl" />
                 </button>
-                <button
+                {/* <button
                   onClick={clearCart}
                   className="border border-red-500 text-red-500 rounded-4xl p-3"
                 >
                   <TbTrash />
-                </button>
+                </button> */}
               </div>
             </div>
             {Number(total) > 0 && (

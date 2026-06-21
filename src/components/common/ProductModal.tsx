@@ -14,13 +14,11 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
   const [visible, setVisible] = useState(false);
   const images = product.imageUrls ?? [];
 
-  // Fade-in do modal ao montar
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 10)
     return () => clearTimeout(t)
   }, [])
 
-  // Pré-carrega todas as imagens assim que o modal abre
   useEffect(() => {
     images.forEach(url => {
       const img = new Image()
@@ -28,10 +26,15 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
     })
   }, [])
 
-  // Reset do loading ao trocar imagem
   useEffect(() => {
     setImgLoaded(false)
   }, [currentImage])
+
+  // Fecha com animação antes de desmontar
+  function handleClose() {
+    setVisible(false)
+    setTimeout(onClose, 300) // aguarda a animação terminar
+  }
 
   function prev() {
     setCurrentImage(i => (i === 0 ? images.length - 1 : i - 1));
@@ -43,20 +46,20 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
 
   return (
     <div
-      onClick={onClose}
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 transition-opacity duration-300 ${
+      onClick={handleClose} // 👈 era onClose
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 transition-all duration-300 ${
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
       <div
         onClick={e => e.stopPropagation()}
         className={`relative bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden transition-all duration-300 ${
-          visible ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-4"
+          visible ? "opacity-100 scale-90 translate-y-0" : "opacity-0 scale-95 translate-y-4"
         }`}
       >
         {/* Botão fechar */}
         <button
-          onClick={onClose}
+          onClick={handleClose} // 👈 era onClose
           className="absolute top-4 right-4 z-10 w-8 h-8 bg-black/50 hover:bg-black/90 cursor-pointer rounded-full flex items-center justify-center transition-all duration-200"
         >
           <FiX size={15} className="text-gray-100" />
@@ -64,14 +67,11 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
 
         {/* Imagem */}
         <div className="relative w-full aspect-square bg-zinc-100 overflow-hidden">
-
-          {/* Spinner enquanto carrega */}
           {!imgLoaded && (
             <div className="absolute inset-0 flex items-center justify-center z-10 bg-zinc-100">
               <div className="w-8 h-8 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin" />
             </div>
           )}
-
           <img
             key={currentImage}
             src={images[currentImage]}
@@ -81,24 +81,16 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
               imgLoaded ? "opacity-100" : "opacity-0"
             }`}
           />
-
           {images.length > 1 && (
             <>
-              <button
-                onClick={prev}
-                className="absolute cursor-pointer left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105"
-              >
+              <button onClick={prev} className="absolute cursor-pointer left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105">
                 <FiChevronLeft size={18} />
               </button>
-              <button
-                onClick={next}
-                className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105"
-              >
+              <button onClick={next} className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105">
                 <FiChevronRight size={18} />
               </button>
             </>
           )}
-
           {images.length > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
               {images.map((_, i) => (
@@ -144,13 +136,12 @@ export default function ProductModal({ product, onAdd, onClose }: Props) {
               {product.description}
             </p>
           </div>
-
           <div className="flex items-center justify-between pt-2 border-t border-gray-100">
             <span className="text-2xl font-black text-neutral-900 tracking-tight">
               R$ {Number(product.price).toFixed(2)}
             </span>
             <button
-              onClick={() => { onAdd(product); onClose(); }}
+              onClick={() => { onAdd(product); handleClose(); }} // 👈 era onClose
               className="flex items-center gap-2 bg-accent text-white px-6 py-3 rounded-2xl hover:bg-gray-700 active:scale-95 transition-all duration-200 text-sm font-semibold"
             >
               <FiShoppingCart size={16} />

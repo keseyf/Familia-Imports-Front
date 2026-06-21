@@ -38,6 +38,17 @@ export async function createOrder(payload: CreateOrderPayload) {
   }
 }
 
+// controllers/ordersController.ts — adiciona essa função
+
+export async function deleteOrder(id: string) {
+  try {
+    const { data } = await api.delete(`/orders/delete/${id}`)
+    return data
+  } catch (err: any) {
+    throw new Error(err.response?.data?.message ?? "Erro ao deletar pedido")
+  }
+}
+
 export async function getOrders() {
   try {
     const { data } = await api.get("/orders")

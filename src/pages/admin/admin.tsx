@@ -5,7 +5,7 @@ import HeaderAdmin from "../../components/common/HeaderA";
 import AdminLogin from "../../components/elements/AdminLogin";
 import UpdateProductController from "../../controllers/updateProduct";
 import DeleteProductController from "../../controllers/deleteProduct";
-import { fetchProducts } from "../../controllers/getProducts";
+import { fetchProducts } from "../../controllers/getAllProducts";
 import SuccessNotification from "../../components/common/SuccessNotification";
 import ErrorNotification from "../../components/common/ErrorNotification";
 import type { Product } from "../../utils/interfaces";
