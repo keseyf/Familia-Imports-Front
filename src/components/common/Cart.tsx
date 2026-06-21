@@ -93,10 +93,9 @@ function formatPhone(value: string) {
     `🆔 *Pedido:* ${orderIds}\n\n`+
       `Aguardo orientações para pagamento! 🙏`
 
-    window.open(
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
-      "_blank"
-    )
+    const url = `whatsapp://send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}`
+    
+    window.open(url, "_blank")
 
     clearCart()
     setCheckoutOpen(false)
