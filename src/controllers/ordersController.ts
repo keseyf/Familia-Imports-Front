@@ -24,11 +24,6 @@ interface CreateOrderPayload {
   userPhone: string
 }
 
-interface UpdateOrderStatusPayload {
-  id: string
-  status: "pending" | "paid" | "shipped" | "delivered" | "cancelled"
-}
-
 export async function createOrder(payload: CreateOrderPayload) {
   try {
     const { data } = await api.post("/orders", payload)
