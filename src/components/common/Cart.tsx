@@ -99,7 +99,7 @@ export default function Cart({
         ? `whatsapp://send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(message)}`  // iOS/Android → abre o app com texto preenchido ✅
         : `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`          // Desktop → abre via browser ✅
 
-      window.open(url, "_blank")
+      window.location.href = url
 
       clearCart()
       setCheckoutOpen(false)
