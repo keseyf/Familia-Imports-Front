@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { BiShoppingBag, BiX } from "react-icons/bi"
 import type { Product } from "../../utils/interfaces"
 import { createOrder } from "../../controllers/createOrder"
-const WHATSAPP_NUMBER = "5531972162133"
+const WHATSAPP_NUMBER = "5531997546048"
 
 export default function Cart({
   cart,
