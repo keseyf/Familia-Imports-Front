@@ -60,8 +60,16 @@ export default function Header() {
   const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    // Roda depois que o resto da página montou, pra checar quais seções existem de fato no DOM
+    // Checa assim que possível...
     setItems(getAvailableNavItems())
+
+    // ...e continua observando o DOM, caso as seções montem depois (lazy/async)
+    const observer = new MutationObserver(() => {
+      setItems(getAvailableNavItems())
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
+
+    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
