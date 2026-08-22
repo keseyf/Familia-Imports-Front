@@ -369,6 +369,8 @@ export default function AdminPage() {
                     <option value="jaqueta">Jaqueta</option>
                     <option value="tenis">Tênis</option>
                     <option value="acessorios">Acessórios</option>
+                <option value="cosmeticos">Cosméticos</option>
+
                   </select>
                 </div>
                 <div className="flex flex-col gap-1.5">

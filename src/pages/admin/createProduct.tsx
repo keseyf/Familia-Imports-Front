@@ -132,6 +132,7 @@ export default function CreateProduct() {
                 <option value="jaqueta">Jaqueta</option>
                 <option value="tenis">Tênis</option>
                 <option value="acessorios">Acessórios</option>
+                <option value="cosmeticos">Cosméticos</option>
 
               </select>
             </div>
